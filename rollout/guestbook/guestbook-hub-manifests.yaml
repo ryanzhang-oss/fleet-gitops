@@ -14,9 +14,9 @@ spec:
     server: https://kubernetes.default.svc
   project: project-gitops
   source:
-    path: fleet/simple-guestbook
-    repoURL: https://github.com/ryanzhang-oss/gitops.git
-    targetRevision: v0.2.0
+    path: applications/simple-guestbook
+    repoURL: https://github.com/ryanzhang-oss/fleet-gitops.git
+    targetRevision: main
   syncPolicy:
     automated:
       prune: true

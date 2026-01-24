@@ -11,7 +11,7 @@ spec:
   source:
     path: guestbook/*
     repoURL: https://github.com/ryanzhang-oss/guestbook-demo.git
-    targetRevision: v0.1.0
+    targetRevision: v0.2.0
   syncPolicy:
     automated:
       prune: true

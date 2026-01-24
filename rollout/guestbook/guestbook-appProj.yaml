@@ -15,4 +15,4 @@ spec:
   sourceNamespaces:
   - guestbook
   sourceRepos:
-  - https://github.com/ryanzhang-oss/gitops.git
+  - https://github.com/ryanzhang-oss/fleet-gitops.git

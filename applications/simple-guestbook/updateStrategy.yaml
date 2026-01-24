@@ -1,0 +1,30 @@
+apiVersion: placement.kubernetes-fleet.io/v1beta1
+kind: StagedUpdateStrategy
+metadata:
+  name: guestbook-strategy
+  namespace: guestbook
+spec:
+  stages:
+    - name: staging
+      labelSelector:
+        matchLabels:
+          kubernetes-fleet.io/env: staging
+      maxConcurrency: 1
+      afterStageTasks:
+        - type: TimedWait
+          waitTime: 1m
+        - type: Approval
+    - name: canary
+      labelSelector:
+        matchLabels:
+          kubernetes-fleet.io/env: canary
+      maxConcurrency: 50%
+      afterStageTasks:
+        - type: Approval
+    - name: prod
+      labelSelector:
+        matchLabels:
+          kubernetes-fleet.io/env: prod
+      maxConcurrency: 30%
+      beforeStageTasks:
+        - type: Approval

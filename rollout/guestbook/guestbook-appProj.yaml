@@ -1,0 +1,18 @@
+kind: AppProject
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: project-gitops
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+  - group: 'placement.kubernetes-fleet.io'
+    kind: '*'
+  destinations:
+  - namespace: 'guestbook'
+    server: https://kubernetes.default.svc
+  - namespace: 'argocd'
+    server: https://kubernetes.default.svc
+  sourceNamespaces:
+  - guestbook
+  sourceRepos:
+  - https://github.com/ryanzhang-oss/gitops.git

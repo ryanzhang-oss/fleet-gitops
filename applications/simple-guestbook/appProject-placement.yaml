@@ -1,0 +1,21 @@
+apiVersion: placement.kubernetes-fleet.io/v1beta1
+kind: ResourcePlacement
+metadata:
+  name: guestbook-app-proj
+  namespace: argocd
+spec:
+  resourceSelectors:
+    - group: argoproj.io
+      kind: AppProject
+      name: project-guestbook
+      version: v1alpha1
+  policy:
+    placementType: PickAll
+  strategy:
+    type: RollingUpdate
+    applyStrategy:
+      whenToTakeOver: IfNoDiff
+    rollingUpdate:
+      maxUnavailable: 1 
+      maxSurge: 25%
+      unavailablePeriodSeconds: 150 

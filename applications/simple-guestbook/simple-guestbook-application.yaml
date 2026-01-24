@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook-simple-app
+  namespace: guestbook
+spec:
+  destination:
+    namespace: guestbook
+    server: https://kubernetes.default.svc
+  project: project-guestbook
+  source:
+    path: guestbook/*
+    repoURL: https://github.com/ryanzhang-oss/guestbook-demo.git
+    targetRevision: v0.1.0
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      enabled: false
+    retry:
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m0s
+      limit: 10
+    syncOptions:
+    - PruneLast=true
+    - PrunePropagationPolicy=foreground
+    - CreateNamespace=true
+    - ApplyOutOfSyncOnly=true

@@ -1,0 +1,24 @@
+apiVersion: placement.kubernetes-fleet.io/v1beta1
+kind: ResourceOverride
+metadata:
+  name: per-cluster-override
+  namespace: guestbook
+spec:
+  placement:
+    name: guestbook-app
+  policy:
+    overrideRules:
+    - clusterSelector:
+        clusterSelectorTerms: []
+      jsonPatchOverrides:
+      - op: replace
+        path: /spec/source/path
+        value: guestbook/${MEMBER-CLUSTER-NAME}
+      - op: replace
+        path: /spec/syncPolicy/automated/enabled
+        value: true
+  resourceSelectors:
+  - group: argoproj.io
+    kind: Application
+    name: guestbook-simple-app
+    version: v1alpha1

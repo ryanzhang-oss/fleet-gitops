@@ -1,0 +1,13 @@
+kind: AppProject
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: project-guestbook
+  namespace: argocd
+spec:
+  destinations:
+  - namespace: 'guestbook'
+    server: https://kubernetes.default.svc
+  sourceNamespaces:
+  - guestbook
+  sourceRepos:
+  - https://github.com/ryanzhang-oss/guestbook-demo.git

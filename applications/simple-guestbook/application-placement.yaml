@@ -1,0 +1,15 @@
+apiVersion: placement.kubernetes-fleet.io/v1beta1
+kind: ResourcePlacement
+metadata:
+  name: guestbook-app
+  namespace: guestbook
+spec:
+  resourceSelectors:
+    - group: argoproj.io
+      kind: Application
+      name: guestbook-simple-app
+      version: v1alpha1
+  policy:
+    placementType: PickAll
+  strategy:
+    type: External

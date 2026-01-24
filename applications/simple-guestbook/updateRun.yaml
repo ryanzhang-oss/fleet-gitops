@@ -1,7 +1,7 @@
 apiVersion: placement.kubernetes-fleet.io/v1beta1
 kind: StagedUpdateRun
 metadata:
-  name: guestbook-release-v0.2.0
+  name: guestbook-release-v0.3.0
   namespace: guestbook
 spec:
   placementName: guestbook-app

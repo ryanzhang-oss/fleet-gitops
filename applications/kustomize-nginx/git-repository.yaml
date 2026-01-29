@@ -1,0 +1,9 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: guestbook-kustomize
+spec:
+  interval: 1m
+  url: https://github.com/ryanzhang-oss/guestbook-demo/
+  ref:
+    branch: main

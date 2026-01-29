@@ -1,0 +1,23 @@
+apiVersion: placement.kubernetes-fleet.io/v1beta1
+kind: ResourceOverride
+metadata:
+  name: per-cluster-override
+spec:
+  placement:
+    name: kustomized-ngix
+  policy:
+    overrideRules:
+    - clusterSelector:
+        clusterSelectorTerms: []
+      jsonPatchOverrides:
+      - op: replace
+        path: /spec/path
+        value: ./kustomize-guestbook/overlays/${MEMBER-CLUSTER-NAME}
+      - op: replace
+        path: /spec/suspend
+        value: false
+  resourceSelectors:
+  - group: kustomize.toolkit.fluxcd.io
+    kind: Kustomization
+    name: guestbook-kustomize
+    version: v1

@@ -1,0 +1,15 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: nginx-kustomize
+  namespace: flux-kustomize
+spec:
+  interval: 1m
+  targetNamespace: nginx-demo
+  sourceRef:
+    kind: GitRepository
+    name: flux-kustomize
+  path: "./applications/kustomize-nginx"
+  prune: true
+  timeout: 3m
+  suspend: false

@@ -1,0 +1,7 @@
+resources:
+  - git-repository.yaml
+  - kustomization-guestbook-application.yaml
+  - serviceaccount.yaml
+  - rbac.yaml
+
+namespace: nginx-demo

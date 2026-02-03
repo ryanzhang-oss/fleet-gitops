@@ -1,0 +1,30 @@
+apiVersion: placement.kubernetes-fleet.io/v1beta1
+kind: ResourcePlacement
+metadata:
+  name: kustomized-ngix
+spec:
+  resourceSelectors:
+    - group: kustomize.toolkit.fluxcd.io
+      kind: Kustomization
+      name: kustomize-nginx
+      version: v1
+    - group: source.toolkit.fluxcd.io
+      kind: GitRepository
+      name: guestbook-demo
+      version: v1
+    - group: rbac.authorization.k8s.io
+      kind: Role
+      name: flux-permissions
+      version: v1
+    - group: rbac.authorization.k8s.io
+      kind: RoleBinding
+      name: flux-permissions
+      version: v1
+    - group: ""
+      kind: ServiceAccount
+      name: flux-applier
+      version: v1
+  policy:
+    placementType: PickAll
+  strategy:
+    type: External

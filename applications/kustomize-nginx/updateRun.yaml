@@ -1,0 +1,7 @@
+apiVersion: placement.kubernetes-fleet.io/v1beta1
+kind: StagedUpdateRun
+metadata:
+  name: nginx-release
+spec:
+  placementName: kustomized-ngix
+  stagedRolloutStrategyName: nginx-update-strategy

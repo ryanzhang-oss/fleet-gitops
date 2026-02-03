@@ -1,7 +1,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: nginx-kustomize
+  name: fleet-gitops
   namespace: flux-kustomize
 spec:
   interval: 1m

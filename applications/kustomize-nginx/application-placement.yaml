@@ -6,11 +6,23 @@ spec:
   resourceSelectors:
     - group: kustomize.toolkit.fluxcd.io
       kind: Kustomization
-      name: guestbook-kustomize
+      name: kustomize-nginx
       version: v1
     - group: source.toolkit.fluxcd.io
       kind: GitRepository
-      name: guestbook-kustomize
+      name: guestbook-demo
+      version: v1
+    - group: rbac.authorization.k8s.io
+      kind: Role
+      name: flux-permissions
+      version: v1
+    - group: rbac.authorization.k8s.io
+      kind: RoleBinding
+      name: flux-permissions
+      version: v1
+    - group: ""
+      kind: ServiceAccount
+      name: flux-applier
       version: v1
   policy:
     placementType: PickAll

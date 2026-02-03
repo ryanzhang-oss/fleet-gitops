@@ -1,7 +1,13 @@
 resources:
-  - git-repository.yaml
-  - kustomization-guestbook-application.yaml
+  - namespace.yaml
   - serviceaccount.yaml
   - rbac.yaml
+  - git-repository.yaml
+  - kustomization-nginx-application.yaml
+  - application-override.yaml
+  - application-placement.yaml
+  - nginx-ns-placement.yaml
+  - updateRun.yaml
+  - updateStrategy.yaml
 
 namespace: nginx-demo

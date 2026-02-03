@@ -1,0 +1,14 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kustomize-nginx
+spec:
+  interval: 1m
+  targetNamespace: nginx-demo
+  sourceRef:
+    kind: GitRepository
+    name: guestbook-demo
+  path: "./kustomize-nginx/overlays/*"
+  prune: true
+  timeout: 3m
+  suspend: true

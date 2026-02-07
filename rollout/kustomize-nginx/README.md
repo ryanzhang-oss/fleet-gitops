@@ -64,7 +64,7 @@ To roll out an updated version of the NGINX application, complete the following 
 2. **Create a new release.** Tag a new release or create a release branch in the `guestbook-demo` repository to mark the updated version.
 3. **Point to the new release.** In this repository, update `applications/kustomize-nginx/git-repository.yaml` to reference the new tag or branch.
 4. **Add a new StagedUpdateRun.** Create a new `StagedUpdateRun` manifest (for example, `updateRun-2.yaml`) that references the same placement and update strategy with a unique name. Set `state: Initialize` to make sure one can examine the rollout detail before it begins.
-5. **Push the changes.** Commit and push to the `main` branch of this repository.
+5. **Push the changes.** Change the `Kustomization.yaml` to reference the new `StagedUpdateRun` manifest. Commit and push to the `main` branch of this repository.
 6. **Automatic reconciliation.** The Flux configuration on the hub cluster detects the updated `GitRepository` reference and triggers a new reconciliation cycle.
 7. **Review the rollout plan.** The new `StagedUpdateRun` in `Initialize` state generates a detailed rollout plan showing which clusters are assigned to each stage. Review the plan and resources snapshots to confirm we are rolling out what is intended and that the stage assignments and progression order are correct before proceeding.
 8. **Approve and monitor.** Set the `StagedUpdateRun` to `state: Run` to start the rollout (either in the repo or via the kubectl command). Monitor progress and approve each stage as it completes until the new version is fully deployed to all production clusters.

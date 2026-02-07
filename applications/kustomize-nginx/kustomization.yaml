@@ -7,7 +7,7 @@ resources:
   - application-override.yaml
   - application-placement.yaml
   - nginx-ns-placement.yaml
-  - updateRun.yaml
+  - updateRun-1.yaml
   - updateStrategy.yaml
 
 namespace: nginx-demo

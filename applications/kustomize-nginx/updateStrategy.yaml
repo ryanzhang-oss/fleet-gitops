@@ -18,8 +18,6 @@ spec:
         matchLabels:
           kubernetes-fleet.io/env: canary
       maxConcurrency: 50%
-      afterStageTasks:
-        - type: Approval
     - name: prod
       labelSelector:
         matchLabels:

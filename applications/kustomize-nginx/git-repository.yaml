@@ -6,4 +6,4 @@ spec:
   interval: 1m
   url: https://github.com/ryanzhang-oss/guestbook-demo/
   ref:
-    branch: main
+    tag: v0.4.1

@@ -5,3 +5,5 @@ metadata:
 spec:
   placementName: kustomized-ngix
   stagedRolloutStrategyName: nginx-update-strategy
+  resourceSnapshotIndex: "2"
+  state: Run

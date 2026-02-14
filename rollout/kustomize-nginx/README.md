@@ -1,4 +1,14 @@
-# Manage NGINX application via Flux and KubeFleet
+# Manage NGINX Application via Flux and KubeFleet
+
+This demo shows how to use Fleet to roll out the NGINX application (defined in the [guestbook-demo](https://github.com/ryanzhang-oss/guestbook-demo) repository) across multiple Kubernetes clusters with staged rollouts.
+
+## Prerequisites
+
+- A Kubernetes hub cluster with Fleet installed
+- One or more member clusters joined to the hub cluster via Fleet
+- Member clusters labeled with `kubernetes-fleet.io/env` (values: `staging`, `canary`, or `prod`)
+- Flux CD installed on the hub cluster
+- Azure CLI (if using the `az` command method)
 
 ## Install NGINX via Flux
 To install the NGINX application via Flux onto the hub cluster, run the following command:
@@ -7,11 +17,11 @@ To install the NGINX application via Flux onto the hub cluster, run the followin
 az k8s-configuration flux create --resource-group ryanzhang-testgroup --cluster-name ryan-hub --cluster-type managedClusters --name nginx-app --scope namespace --namespace  flux-kustomize   --kind git --url https://github.com/ryanzhang-oss/fleet-gitops/   --branch main --kustomization name=nginx-kustomization path=applications/kustomize-nginx prune=true
 ```
 
-This is equivalent to applying the YAML files in the current directory with RBAC setup for Flux.
+This is equivalent to applying the YAML files in the `rollout/kustomize-nginx/` directory, which configure Flux to sync resources from `applications/kustomize-nginx/`.
 
 ## Roll Out the NGINX Application to Member Clusters via KubeFleet
 
-The CRs in this directory instruct the Flux controller to apply all the YAML files in the `applications/kustomize-nginx/` directory to the hub cluster.
+The custom resources in the `applications/kustomize-nginx/` directory instruct the Flux controller to apply all the YAML files in that directory to the hub cluster.
 
 Below is a summary of each file and its role in deploying and rolling out the NGINX application across fleet member clusters.
 
@@ -48,7 +58,7 @@ Below is a summary of each file and its role in deploying and rolling out the NG
 
 ## How It All Fits Together
 
-After you run the command (or apply the YAML files in this directory to the hub cluster), here is how the deployment and rollout process unfolds:
+After you run the command (or apply the YAML files in `rollout/kustomize-nginx/` to configure Flux), here is how the deployment and rollout process unfolds:
 
 1. **Flux on the hub cluster** reconciles `kustomization.yaml` in the `applications/kustomize-nginx` directory, which creates all the resources in the `nginx-demo` namespace on the hub.
 2. **KubeFleet placements** (`application-placement.yaml` and `nginx-ns-placement.yaml`) propagate the namespace, Flux GitRepository, Kustomization, RBAC, and ServiceAccount to member clusters.
@@ -64,7 +74,7 @@ To roll out an updated version of the NGINX application, complete the following 
 2. **Create a new release.** Tag a new release or create a release branch in the `guestbook-demo` repository to mark the updated version.
 3. **Point to the new release.** In this repository, update `applications/kustomize-nginx/git-repository.yaml` to reference the new tag or branch.
 4. **Add a new StagedUpdateRun.** Create a new `StagedUpdateRun` manifest (for example, `updateRun-3.yaml`) that references the same placement and update strategy with a unique name (e.g., `nginx-release-2`). Set `state: Initialize` to ensure you can examine the rollout details before it begins.
-5. **Push the changes.** Update `kustomization.yaml` to reference the new `StagedUpdateRun` manifest. Commit and push to the `main` branch of this repository.
+5. **Push the changes.** Update `applications/kustomize-nginx/kustomization.yaml` to reference the new `StagedUpdateRun` manifest. Commit and push to the `main` branch of this repository.
 6. **Automatic reconciliation.** The Flux configuration on the hub cluster detects the updated `GitRepository` reference and triggers a new reconciliation cycle.
 7. **Review the rollout plan.** The new `StagedUpdateRun` in `Initialize` state generates a detailed rollout plan showing which clusters are assigned to each stage. Review the plan and resource snapshots to confirm you are rolling out what is intended and that the stage assignments and progression order are correct before proceeding.
 8. **Approve and monitor.** Set the `StagedUpdateRun` to `state: Run` to start the rollout (either in the repo or via kubectl). Monitor progress and approve each stage as needed until the new version is fully deployed to all production clusters.

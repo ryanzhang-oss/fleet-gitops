@@ -7,7 +7,7 @@ This demo shows how to use Fleet to roll out the NGINX application (defined in t
 - A Kubernetes hub cluster with Fleet installed
 - One or more member clusters joined to the hub cluster via Fleet
 - Member clusters labeled with `kubernetes-fleet.io/env` (values: `staging`, `canary`, or `prod`)
-- Flux CD installed on the hub cluster
+- Flux CD installed on all clusters (hub and member clusters)
 - Azure CLI (if using the `az` command method)
 
 ## Install NGINX via Flux

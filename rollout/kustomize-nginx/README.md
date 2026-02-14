@@ -7,25 +7,25 @@ This demo shows how to use Fleet to roll out the NGINX application (defined in t
 - A Kubernetes hub cluster with Fleet installed
 - One or more member clusters joined to the hub cluster via Fleet
 - Member clusters labeled with `kubernetes-fleet.io/env` (values: `staging`, `canary`, or `prod`)
-- Flux CD installed on all clusters (hub and member clusters)
+- Flux CD controller installed on all member clusters
 - Azure CLI (if using the `az` command method)
 
-## Install NGINX via Flux
+## Install and Configure Flux on the Hub Cluster
 
-To install the NGINX application via Flux onto the hub cluster, run the following command:
+The following command installs Flux CD on the hub cluster and configures it to sync resources from the `applications/kustomize-nginx/` directory in the `fleet-gitops` repository:
 
 ```bash
 az k8s-configuration flux create --resource-group ryanzhang-testgroup --cluster-name ryan-hub --cluster-type managedClusters --name nginx-app --scope namespace --namespace  flux-kustomize   --kind git --url https://github.com/ryanzhang-oss/fleet-gitops/   --branch main --kustomization name=nginx-kustomization path=applications/kustomize-nginx prune=true
 ```
 
-**Alternative:** Instead of using the Azure CLI, you can manually apply the Flux configuration by running:
+**Alternative:** Instead of using the Azure CLI, you can manually install Flux CD and apply the configuration by running:
 
 ```bash
 kubectl apply -f rollout/kustomize-nginx/git-repository.yaml
 kubectl apply -f rollout/kustomize-nginx/kustomization-nginx.yaml
 ```
 
-Both methods configure Flux to sync resources from the `applications/kustomize-nginx/` directory.
+Both methods install Flux CD on the hub cluster and configure it to sync resources from the `applications/kustomize-nginx/` directory.
 
 ## Roll Out the NGINX Application to Member Clusters via KubeFleet
 

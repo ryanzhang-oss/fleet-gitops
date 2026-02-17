@@ -1,6 +1,7 @@
 # Manage NGINX application via Flux and KubeFleet
 
 ## install NGINX via Flux
+
 To install the NGINX application via Flux on to the hub cluster, run the following command:
 
 ```

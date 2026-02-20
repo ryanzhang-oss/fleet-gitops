@@ -2,6 +2,25 @@
 
 This demo shows how to use Fleet to roll out the NGINX application (defined in the [guestbook-demo](https://github.com/ryanzhang-oss/guestbook-demo) repository) across multiple Kubernetes clusters with staged rollouts.
 
+## Before You Begin
+
+This guide assumes familiarity with the following technologies:
+
+- **[Kustomize](https://kustomize.io/)** — A Kubernetes-native configuration management tool used to customize YAML manifests without templating. This demo uses Kustomize overlays to apply per-cluster configurations.
+- **[Flux CD](https://fluxcd.io/)** — A GitOps toolkit for Kubernetes that continuously reconciles cluster state with declarations in Git. Flux watches Git repositories and automatically applies changes to clusters.
+- **[KubeFleet](https://github.com/Azure/fleet)** — A multi-cluster orchestration system that distributes and manages workloads across a fleet of Kubernetes clusters using placements, overrides, and staged rollout strategies.
+
+If you are new to any of these, review their official documentation before proceeding.
+
+### Fork the Repositories
+
+To follow along and practice GitOps workflows hands-on, fork both repositories into your own GitHub account:
+
+1. **This repository:** [fleet-gitops](https://github.com/ryanzhang-oss/fleet-gitops) — contains the Fleet placement, override, and rollout resources as well as the Flux configuration that ties everything together.
+2. **The application repository:** [guestbook-demo](https://github.com/ryanzhang-oss/guestbook-demo) — contains the NGINX application manifests and per-cluster Kustomize overlays.
+
+After forking, update the Git URLs in the YAML files (e.g., `git-repository.yaml`) to point to your forks so that Flux watches your repositories and you can experiment with making changes, opening pull requests, and observing GitOps reconciliation in action.
+
 ## Prerequisites
 
 - A Kubernetes hub cluster with Fleet installed

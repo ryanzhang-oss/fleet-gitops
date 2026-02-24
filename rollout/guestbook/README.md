@@ -16,7 +16,7 @@ If you are new to any of these, review their official documentation before proce
 To follow along and practice GitOps workflows hands-on, fork both repositories into your own GitHub account:
 
 1. **This repository:** [fleet-gitops](https://github.com/ryanzhang-oss/fleet-gitops) — contains the Fleet placement, override, and rollout resources as well as the Argo CD configuration that ties everything together.
-2. **The application repository:** [guestbook-demo](https://github.com/ryanzhang-oss/guestbook-demo) — contains the Guestbook application manifests and per-cluster configurations.
+2. **The application repository:** [guestbook-demo](https://github.com/ryanzhang-oss/guestbook-demo) — contains the Guestbook application manifests and per-stage configurations (organized by environment label, e.g., `staging`, `canary`, `prod`).
 
 After forking, update the Git URLs in the YAML files (e.g., `simple-guestbook-application.yaml`, `guestbook-appProj.yaml`) to point to your forks so that Argo CD watches your repositories and you can experiment with making changes, opening pull requests, and observing GitOps reconciliation in action.
 
@@ -60,7 +60,7 @@ Below is a summary of each file and its role in deploying and rolling out the Gu
 | **appProject-placement.yaml** | A `ResourcePlacement` (namespaced) with a `PickAll` policy that selects the Argo CD `AppProject` resource and distributes it to all member clusters using a `RollingUpdate` strategy. |
 | **application-placement.yaml** | A `ResourcePlacement` (namespaced) with a `PickAll` policy that selects the Argo CD `Application` resource and distributes it to all matching member clusters. It uses an **External** rollout strategy, meaning rollout is controlled by a `StagedUpdateRun` rather than automatic rolling updates. |
 | **guestbook-ns-placement.yaml** | A `ClusterResourcePlacement` that propagates the `guestbook` `Namespace` (namespace-only scope) to all member clusters using a `RollingUpdate` strategy. |
-| **application-override.yaml** | A `ResourceOverride` tied to the `guestbook-app` placement. For each member cluster, it applies two JSON-patch operations on the Argo CD `Application`: (1) replaces the `spec.source.path` with a cluster-specific path (`guestbook/${MEMBER-CLUSTER-NAME}`), enabling per-cluster configuration, and (2) sets `spec.syncPolicy.automated.enabled` to `true` to activate reconciliation. |
+| **application-override.yaml** | A `ResourceOverride` tied to the `guestbook-app` placement. It applies two JSON-patch operations on the Argo CD `Application`: (1) replaces the `spec.source.path` with a stage-specific path (`guestbook/${MEMBER-CLUSTER-LABEL-KEY-kubernetes-fleet.io/env}`), enabling per-stage configuration based on the cluster's `env` label (e.g., `staging`, `canary`, or `prod`), and (2) sets `spec.syncPolicy.automated.enabled` to `true` to activate reconciliation. |
 
 ### Staged Rollout
 
@@ -75,15 +75,15 @@ After you apply the hub-level manifests (or configure Argo CD), here is how the 
 
 1. **Argo CD on the hub cluster** syncs the `applications/simple-guestbook` directory, which creates all the resources in the `guestbook` namespace on the hub including the Argo CD Application, AppProject, KubeFleet placements, overrides, and staged rollout resources.
 2. **KubeFleet placements** (`appProject-placement.yaml`, `application-placement.yaml`, and `guestbook-ns-placement.yaml`) propagate the namespace, Argo CD AppProject, and Application to member clusters.
-3. The **ResourceOverride** customizes the Argo CD Application per member cluster, pointing each to its own application path (`guestbook/${MEMBER-CLUSTER-NAME}`) and enabling automated sync so Argo CD begins deploying the Guestbook app.
+3. The **ResourceOverride** customizes the Argo CD Application per stage, pointing each cluster to a stage-specific path (`guestbook/${MEMBER-CLUSTER-LABEL-KEY-kubernetes-fleet.io/env}`, resolved from the cluster's `kubernetes-fleet.io/env` label) and enabling automated sync so Argo CD begins deploying the Guestbook app.
 4. The **StagedUpdateStrategy** and **StagedUpdateRun** orchestrate the rollout across staging, canary, and production clusters with approval gates, ensuring safe progressive delivery.
-5. **Argo CD on the member clusters** syncs the application manifests from the specified Git repository and path directed by the Argo CD Application placed and rolled out by KubeFleet. In this way, the Guestbook application is deployed with any cluster-specific customizations defined in the `guestbook-demo` repository.
+5. **Argo CD on the member clusters** syncs the application manifests from the specified Git repository and stage-specific path directed by the Argo CD Application placed and rolled out by KubeFleet. In this way, the Guestbook application is deployed with any stage-specific customizations defined in the corresponding stage directory of the `guestbook-demo` repository.
 
 ## Continuous Deployment
 
 To roll out an updated version of the Guestbook application, complete the following steps:
 
-1. **Update the application manifests.** Make the desired changes in the `guestbook-demo` repository (for example, update the container image tag in the Deployment). Per-cluster customizations can also be applied by editing the corresponding cluster-specific directory. Open a pull request, review, and merge to the main branch.
+1. **Update the application manifests.** Make the desired changes in the `guestbook-demo` repository (for example, update the container image tag in the Deployment). Per-stage customizations can also be applied by editing the corresponding stage directory (e.g., `guestbook/staging`, `guestbook/canary`, `guestbook/prod`) in the `guestbook-demo` repository. Open a pull request, review, and merge to the main branch.
 2. **Create a new release.** Tag a new release in the `guestbook-demo` repository to mark the updated version.
 3. **Point to the new release.** In this repository, update `applications/simple-guestbook/simple-guestbook-application.yaml` to reference the new tag in the `spec.source.targetRevision` field.
 4. **Add a new StagedUpdateRun.** Create a new `StagedUpdateRun` manifest (for example, `updateRun-2.yaml`) that references the same placement and update strategy with a unique name (e.g., `guestbook-release-v0.4.0`). Set `state: Initialize` to ensure you can examine the rollout details before it begins.

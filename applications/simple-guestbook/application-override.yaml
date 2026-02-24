@@ -13,7 +13,7 @@ spec:
       jsonPatchOverrides:
       - op: replace
         path: /spec/source/path
-        value: guestbook/${MEMBER-CLUSTER-NAME}
+        value: guestbook/${MEMBER-CLUSTER-LABEL-KEY-kubernetes-fleet.io/env}
       - op: replace
         path: /spec/syncPolicy/automated/enabled
         value: true
